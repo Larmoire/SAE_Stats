@@ -61,8 +61,17 @@ def repart_ratio():
 def get_tx_elec():
     return #serie_tx
 
-def mod_log_evol_tx_elec(tx_sat,x_mod_log,serie_tx_elec):
-    return #vecteur_mod_log
+def mod_log_evol_tx_elec(tx_sat, x_mod_log, serie_tx_elec):
+    new_serie = []     
+    for i in range(0,len(serie_tx_elec)):         
+        new_serie.append(mt.log(tx_sat/serie_tx_elec.values[i]-1))     
+        rep = []     
+        result = linregress(serie_tx_elec.index,new_serie)     
+        #Gros bisous à Cathou <33     
+        for i in range(0,len(x_mod_log)):         
+            rep.append(tx_sat/(1+mt.exp(result.slope*x_mod_log[i]+result.intercept)))    
+            rep = np.array(rep)    
+    return rep, result.slope
 
     
 ###QUELQUES TESTS INDICATIFS
