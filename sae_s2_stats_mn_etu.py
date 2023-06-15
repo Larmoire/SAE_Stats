@@ -55,11 +55,21 @@ def repart_ratio():
     return data['ratio'], data_repart
 
 
-
-
-
 def get_tx_elec():
-    return #serie_tx
+    # Filtrer les années entre 2010 et 2022
+    filtered_data = data_immat[(data_immat['Annee'] >= 2010) & (data_immat['Annee'] <= 2022)]
+    # Créer un nouveau dataframe avec les colonnes 'Annee' et 'energie'
+    df = filtered_data[['Annee', 'energie', 'Nb_immat']]
+    # Compter le nombre d'immatriculations par année et énergie
+    counts = df.groupby(['Annee', 'energie'])['Nb_immat'].sum().reset_index()
+    # Calculer le nombre total d'immatriculations par année
+    total_counts = counts.groupby('Annee')['Nb_immat'].sum()
+    # Filtrer les lignes correspondant à l'énergie électrique et hydrogène
+    elec_hydro_counts = counts[counts['energie'].isin(['Electrique et hydrogene'])]
+    # Calculer le taux annuel des véhicules à énergie électrique et hydrogène
+    tx_elec = elec_hydro_counts.groupby('Annee')['Nb_immat'].sum() / total_counts
+    # Créer la série indexée par les années avec les taux annuels
+    tx_elec = tx_elec.rename('Taux annuel des véhicules électriques et hydrogène')
 
 def mod_log_evol_tx_elec(tx_sat, x_mod_log, serie_tx_elec):
     new_serie = []     
